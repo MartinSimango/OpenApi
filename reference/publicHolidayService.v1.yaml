@@ -1,9 +1,199 @@
 openapi: 3.0.0
 info:
-  title: publicHolidayService
+  title: PublicHolidayService
   version: '1.0'
+  description: Manage public holiday
 servers:
-  - url: 'http://localhost:3000'
-paths: {}
+  - url: 'http://todos.stoplight.io'
+    description: Prod
+paths:
+  /public-holidays:
+    post:
+      summary: Create a public holiday
+      tags: []
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+                    exclusiveMinimum: true
+              examples:
+                example-1:
+                  value:
+                    id: 0
+      operationId: post-public-holidays
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/publicHolidaySaveRequest'
+            examples:
+              example-1:
+                value:
+                  name: Christmas
+                  date: '2021-12-25'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: hello
+    get:
+      summary: ''
+      operationId: get-public-holidays
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  public-holidays:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/publicHolidayResponse'
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      name: string
+                      date: '2021-01-01'
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+          required: true
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+          required: true
+  '/public-holidays/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+        description: The id of the public holiday to be replaced
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  holiday:
+                    $ref: '#/components/schemas/publicHolidayResponse'
+              examples:
+                example-1:
+                  value:
+                    holiday:
+                      id: 0
+                      name: string
+                      date: '2021-01-01'
+      operationId: get-public-holidays-id
+    delete:
+      summary: ''
+      operationId: delete-public-holidays-id
+      responses:
+        '204':
+          description: No Content
+    put:
+      summary: ''
+      operationId: put-public-holidays-id
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                publicHolidaySaveRequest:
+                  $ref: '#/components/schemas/publicHolidaySaveRequest'
+              required:
+                - publicHolidaySaveRequest
 components:
-   schemas: {}
+  schemas:
+    publicHolidayResponse:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          id: 101
+          name: Christmas
+          date: '2021-12-25'
+      properties:
+        id:
+          type: integer
+          exclusiveMinimum: true
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          minLength: 1
+          format: date
+          example: '2021-01-01'
+      required:
+        - id
+        - name
+        - date
+    publicHolidaySaveRequest:
+      description: ''
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          minLength: 1
+          format: date
+      required:
+        - name
+        - date
+      x-examples:
+        example-1:
+          name: Christmas
+          date: '2020-12-25'
+    publicHolidayRequest:
+      description: ''
+      type: object
+      properties:
+        startDate:
+          type: string
+          minLength: 1
+          format: date
+        endDate:
+          type: string
+          minLength: 1
+          format: date
+      required:
+        - startDate
+        - endDate
+  securitySchemes:
+    'API Key ':
+      name: apiKey
+      type: apiKey
+      in: query
+  parameters: {}
